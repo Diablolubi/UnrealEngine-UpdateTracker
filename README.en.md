@@ -1,6 +1,6 @@
 # Unreal Engine Update Tracker
 
-[Read this in Japanese](README.md)
+[Read this in Japanese](README.md) | [中文版](README.zh.md)
 
 This project is an automated service that periodically monitors updates to Unreal Engine's private GitHub repository, summarizes important changes (such as new features and specification changes) using AI (Google Gemini), and posts them as reports to GitHub Discussions.
 
@@ -51,7 +51,7 @@ If you find this tool useful, please consider supporting its development through
     -   `GEMINI_API_KEY`: The API key obtained from [Google AI Studio](https://aistudio.google.com/app/apikey).
 
 3.  **Configure Notification Targets (At least one is required):**
-    Next, choose and configure where you want to receive the reports. You can set up **GitHub Discussions**, **Slack**, **Discord**, or any combination of them.
+    Next, choose and configure where you want to receive the reports. You can set up **GitHub Discussions**, **Slack**, **Discord**, **Feishu**, or any combination of them.
 
     #### A) Posting to GitHub Discussions
     Ideal for team discussions and permanent record-keeping.
@@ -74,6 +74,12 @@ If you find this tool useful, please consider supporting its development through
     2.  **Add a Secret:** Register the following secret.
         -   `DISCORD_WEBHOOK_URL`: The webhook URL created above.
 
+    #### D) Posting to Feishu (Lark)
+    Suitable for real-time notifications for teams using Feishu/Lark.
+    1.  **Create a Custom Bot:** Add a "Custom Bot" in your Feishu group settings -> "Bots" and copy its webhook URL.
+    2.  **Add a Secret:** Register the following secret.
+        -   `FEISHU_WEBHOOK_URL`: The webhook URL copied above.
+
  **⚠️ Important: Recommendation for Secure Operation**
  The update history of Unreal Engine is confidential information accessible only to authorized accounts under the Epic Games license agreement. To prevent unintentional information leaks, this tool is designed to **stop operating** if at least one notification target is not configured.
 
@@ -91,6 +97,7 @@ It is strongly recommended to set `DISCUSSION_REPO` to a **fork of the Unreal En
     -   **Slack Webhook URL:** A temporary Slack Webhook URL to use, overriding the secret.
     -   **Slack Channel:** A temporary Slack channel name to use, overriding the secret.
     -   **Discord Webhook URL:** A temporary Discord Webhook URL to use, overriding the secret.
+    -   **Feishu Webhook URL:** A temporary Feishu Webhook URL to use, overriding the secret.
 
 -   **Changing Default Values:**
     You can change the default values for scheduled and manual runs by setting repository **Variables**. Go to `Settings` > `Secrets and variables` > `Actions`, and from the `Variables` tab, set the following:

@@ -295,6 +295,42 @@ def send_discord_notification(webhook_url, message_text, title):
         print(f"An error occurred while sending Discord notification: {e}")
         return False
 
+def send_feishu_notification(webhook_url, message_text, title):
+    """Sends a notification to a Feishu (Lark) channel via a webhook."""
+    print("---")
+    print("Sending Feishu notification...")
+    try:
+        # Construct Feishu rich text message (post)
+        payload = {
+            "msg_type": "post",
+            "content": {
+                "post": {
+                    "zh_cn": {
+                        "title": title,
+                        "content": [
+                            [{
+                                "tag": "text",
+                                "text": message_text
+                            }]
+                        ]
+                    }
+                }
+            }
+        }
+        
+        response = requests.post(webhook_url, json=payload)
+        response.raise_for_status()
+        result = response.json()
+        if result.get("code") != 0:
+            print(f"Feishu API returned an error: {result.get('msg')}")
+            return False
+        
+        print("Successfully sent Feishu notification.")
+        return True
+    except requests.exceptions.RequestException as e:
+        print(f"An error occurred while sending Feishu notification: {e}")
+        return False
+
 def main():
     """
     Main function to execute the update check.
@@ -339,13 +375,15 @@ def main():
     slack_webhook_url = os.environ.get("SLACK_WEBHOOK_URL")
     slack_channel = os.environ.get("SLACK_CHANNEL")
     discord_webhook_url = os.environ.get("DISCORD_WEBHOOK_URL")
+    feishu_webhook_url = os.environ.get("FEISHU_WEBHOOK_URL")
 
     has_discussion_target = discussion_repo_name and discussion_repo_pat
     has_slack_target = slack_webhook_url and slack_channel
     has_discord_target = discord_webhook_url
+    has_feishu_target = feishu_webhook_url
 
-    if not has_discussion_target and not has_slack_target and not has_discord_target:
-        print("FATAL: No notification target is configured. Please set at least one of the following: DISCUSSION_REPO/DISCUSSION_REPO_PAT, SLACK_WEBHOOK_URL/SLACK_CHANNEL, or DISCORD_WEBHOOK_URL.")
+    if not has_discussion_target and not has_slack_target and not has_discord_target and not has_feishu_target:
+        print("FATAL: No notification target is configured. Please set at least one of the following: DISCUSSION_REPO/DISCUSSION_REPO_PAT, SLACK_WEBHOOK_URL/SLACK_CHANNEL, DISCORD_WEBHOOK_URL, or FEISHU_WEBHOOK_URL.")
         return
     
     print("Notification target(s) configured correctly.")
@@ -355,6 +393,8 @@ def main():
         print("- Slack Notification is enabled.")
     if has_discord_target:
         print("- Discord Notification is enabled.")
+    if has_feishu_target:
+        print("- Feishu Notification is enabled.")
 
     # --- State and Commit Fetching ---
     print("\n--- 3. Fetching Commits ---")
@@ -410,6 +450,13 @@ def main():
         else:
             print("\n--- 5c. Discord target not configured. Skipping. ---")
 
+        # --- 5d. Post to Feishu ---
+        if has_feishu_target:
+            print("\n--- 5d. Posting to Feishu ---")
+            send_feishu_notification(feishu_webhook_url, report_body, report_title)
+        else:
+            print("\n--- 5d. Feishu target not configured. Skipping. ---")
+
     else:
         print("Failed to generate report from AI. No content to post.")
         # Notify on AI failure
@@ -421,6 +468,9 @@ def main():
         if has_discord_target:
             print("\n--- Handling Discord Notification for AI Failure ---")
             send_discord_notification(discord_webhook_url, error_message, report_title)
+        if has_feishu_target:
+            print("\n--- Handling Feishu Notification for AI Failure ---")
+            send_feishu_notification(feishu_webhook_url, error_message, report_title)
 
     # --- Finish ---
     print("\n=============================================")

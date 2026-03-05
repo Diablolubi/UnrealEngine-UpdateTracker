@@ -1,6 +1,6 @@
 # Unreal Engine Update Tracker
 
-[English version](README.en.md)
+[English version](README.en.md) | [中文版](README.zh.md)
 
 このプロジェクトは、Unreal EngineのプライベートGitHubリポジトリの更新を定期的に監視し、AI（Google Gemini）を使って重要な変更（新機能、仕様変更など）を要約し、GitHub Discussionsにレポートとして投稿する自動化サービスです。
 
