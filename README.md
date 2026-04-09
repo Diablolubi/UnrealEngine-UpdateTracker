@@ -12,16 +12,16 @@
 
 ## 🌟 主な機能
 
--   **自動更新チェック:** GitHub Actionsを使い、スケジュール（毎日日本時間午前8時 / UTC 23:00）または手動でUEリポジトリの最新コミットをチェックします。
+-   **自動更新チェック:** GitHub Actionsを使い、スケジュール (毎週月曜日 日本時間午前9時 / 月曜日 UTC 00:00) または手動でUEリポジトリの最新コミットをチェックします。
 -   **AIによる要約:** Gemini APIがコミット内容を分析し、「新機能」「仕様変更」などのカテゴリに分類し、内容を要約します。
--   **Discussionへの投稿:** 生成されたレポートを、リポジリのGitHub Discussionsに「Unreal Engine Daily Report」として投稿します。
+-   **Discussionへの投稿:** 生成されたレポートを、リポジリのGitHub Discussionsに「Unreal Engine Weekly Report」として投稿します。
 -   **Slack通知:** レポートの内容を、指定したSlackチャンネルにも同時に通知できます。
 -   **Discord通知:** レポートの内容を、指定したDiscordチャンネルにも同時に通知できます。
 
 ## 🚀 最新レポートを購読する
 
 このツールを自分でセットアップしなくても、更新レポートの結果を購読できます。
-以下のリポジトリでは、毎日定時に生成されたレポートがGitHub Discussionsに投稿されています。
+以下のリポジトリでは、毎週月曜日に生成されたレポートがGitHub Discussionsに投稿されています。
 
 [**UnrealEngine-UpdateTrackerReport リポジトリを購読する**](https://github.com/pafuhana1213/UnrealEngine-UpdateTrackerReport)
 
@@ -82,11 +82,11 @@
 
 ## 🏃‍♀️ 実行方法
 
--   **自動実行:** 設定されたスケジュール（デフォルトでは毎日日本時間午前8時 / UTC 23:00）になると、自動的にワークフローが実行されます。
+-   **自動実行:** 設定されたスケジュール (デフォルトでは毎週月曜日 日本時間午前9時 / 月曜日 UTC 00:00) になると、自動的にワークフローが実行されます。
 -   **手動実行:** リポジトリの`Actions`タブに移動し、`Unreal Engine Update Tracker`ワークフローを選択して、`Run workflow`ボタンから手動で実行することも可能です。**注意: 手動実行はリポジトリの管理者のみが可能です。**
     -   **Report Language:** レポートを出力したい言語を自由に入力します（例: `Japanese`, `English`）。デフォルトは `Japanese` です。
-    -   **Commit Scan Limit:** 手動実行時にスキャンする最新コミット数を指定できます。（デフォルト: 過去24時間）
-    -   **Discussion Category:** レポートを投稿するDiscussionカテゴリ名。デフォルトは `Daily Reports` です。
+    -   **Commit Scan Limit:** 手動実行時にスキャンする最新コミット数を指定できます。（デフォルト: 過去7日間）
+    -   **Discussion Category:** レポートを投稿するDiscussionカテゴリ名。デフォルトは `Weekly Reports` です。
     -   **Gemini Model:** 解析に使用するAIモデル名。デフォルトは `gemini-2.5-pro` です。
     -   **Slack Webhook URL:** 一時的に使用するSlack Webhook URL。Secretの値を上書きします。
     -   **Slack Channel:** 一時的に使用するSlackチャンネル名。Secretの値を上書きします。
@@ -95,7 +95,7 @@
 -   **各種デフォルト値の変更:**
     スケジュール実行時や手動実行時のデフォルト値は、リポジトリの **Variables** で設定することで変更できます。`Settings` > `Secrets and variables` > `Actions` の `Variables` タブから、以下の変数を設定します。
     -   `REPORT_LANGUAGE`: デフォルトのレポート言語（例: `English`）
-    -   `DISCUSSION_CATEGORY`: デフォルトの投稿先カテゴリ名（例: `Daily Reports`）
+    -   `DISCUSSION_CATEGORY`: デフォルトの投稿先カテゴリ名（例: `Weekly Reports`）
     -   `GEMINI_MODEL`: デフォルトで使用するAIモデル（例: `gemini-2.5-pro`）
     -   `UE_BRANCH`: 監視対象のブランチ名（例: `release`）。デフォルトは `ue5-main` です。
 

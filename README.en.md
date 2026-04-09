@@ -12,16 +12,16 @@ Note: This image is an example of a report, and the content shown is entirely du
 
 ## 🌟 Key Features
 
--   **Automatic Update Checks:** Uses GitHub Actions to check for the latest commits in the UE repository on a schedule (daily at 23:00 UTC / 8:00 AM JST) or manually.
+-   **Automatic Update Checks:** Uses GitHub Actions to check for the latest commits in the UE repository on a schedule (every Monday 8:00 AM Beijing Time / Monday 00:00 UTC) or manually.
 -   **AI-Powered Summaries:** The Gemini API analyzes commit contents, categorizes them into sections like "New Features" and "Specification Changes," and provides a summary for each.
--   **Posting to Discussions:** The generated report is posted to the repository's GitHub Discussions as "Unreal Engine Daily Report."
+-   **Posting to Discussions:** The generated report is posted to the repository's GitHub Discussions as "Unreal Engine Weekly Report."
 -   **Slack Notifications:** The report content can also be sent simultaneously to a specified Slack channel.
 -   **Discord Notifications:** The report content can also be sent simultaneously to a specified Discord channel.
 
 ## 🚀 Subscribe to the Latest Reports
 
 You can subscribe to the update reports without setting up this tool yourself.
-In the repository below, reports generated at a fixed time every day are posted to GitHub Discussions.
+In the repository below, reports generated every Monday are posted to GitHub Discussions.
 
 [**Subscribe to the UnrealEngine-UpdateTrackerReport Repository**](https://github.com/pafuhana1213/UnrealEngine-UpdateTrackerReport)
 
@@ -29,7 +29,7 @@ In the repository below, reports generated at a fixed time every day are posted 
 
 ## ✨ Please Consider Supporting!
 
-I hope this tool is helping you with your daily UE catch-up.
+I hope this tool is helping you with your weekly UE catch-up.
 
 This tool is developed and maintained by a single person, covering costs like coffee and API fees out of pocket as a passion project. ☕
 If you find this tool useful, please consider supporting its development through GitHub Sponsors. Your support would be a great encouragement and a huge motivation to keep this project going!
@@ -88,11 +88,11 @@ It is strongly recommended to set `DISCUSSION_REPO` to a **fork of the Unreal En
 
 ## 🏃‍♀️ How to Run
 
--   **Automatic Execution:** The workflow runs automatically on the configured schedule (defaults to daily at 23:00 UTC / 8:00 AM JST).
+-   **Automatic Execution:** The workflow runs automatically on the configured schedule (defaults to every Monday 8:00 AM Beijing Time / Monday 00:00 UTC).
 -   **Manual Execution:** You can also run it manually by going to the repository's `Actions` tab, selecting the `Unreal Engine Update Tracker` workflow, and clicking the `Run workflow` button. **Note: Manual execution is restricted to repository administrators.**
     -   **Report Language:** Enter the language for the report (e.g., `English`, `Japanese`). Default: `Japanese`.
-    -   **Commit Scan Limit:** Specify the number of recent commits to scan for manual runs (default: last 24 hours).
-    -   **Discussion Category:** The name of the Discussion category to post the report to. Default: `Daily Reports`.
+    -   **Commit Scan Limit:** Specify the number of recent commits to scan for manual runs (default: last 7 days).
+    -   **Discussion Category:** The name of the Discussion category to post the report to. Default: `Weekly Reports`.
     -   **Gemini Model:** The name of the AI model to use for analysis. Default: `gemini-2.5-pro`.
     -   **Slack Webhook URL:** A temporary Slack Webhook URL to use, overriding the secret.
     -   **Slack Channel:** A temporary Slack channel name to use, overriding the secret.

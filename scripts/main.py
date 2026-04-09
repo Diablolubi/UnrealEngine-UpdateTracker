@@ -18,7 +18,7 @@ def fetch_new_commits(github_client):
     """
     Fetches new commits from the UE repo.
     - If COMMIT_SCAN_LIMIT is set (manual run), it fetches that many recent commits.
-    - Otherwise (scheduled run), it fetches commits from the last 24 hours.
+    - Otherwise (scheduled run), it fetches commits from the last 7 days.
     """
     print(f"Fetching commits from {UE_REPO_NAME} on branch {UE_BRANCH}...")
     try:
@@ -31,7 +31,7 @@ def fetch_new_commits(github_client):
             new_commits = list(commits[:COMMIT_SCAN_LIMIT])
             new_commits.reverse() # Oldest to newest
         else:
-            since_time = datetime.utcnow() - timedelta(hours=24)
+            since_time = datetime.utcnow() - timedelta(days=7)
             print(f"Scheduled run: Fetching commits from branch '{UE_BRANCH}' since {since_time.isoformat()} UTC...")
             commits = repo.get_commits(sha=UE_BRANCH, since=since_time)
             new_commits = list(commits)
@@ -143,7 +143,7 @@ def _run_graphql_query(query, variables, pat):
     else:
         raise Exception(f"Query failed with status code {response.status_code}: {response.text}")
 
-def get_repository_and_category_ids(repo_name, pat, category_name="Daily Reports"):
+def get_repository_and_category_ids(repo_name, pat, category_name="Weekly Reports"):
     """Gets the repository and discussion category IDs using the GraphQL API."""
     owner, name = repo_name.split('/')
     query = """
@@ -181,7 +181,7 @@ def get_repository_and_category_ids(repo_name, pat, category_name="Daily Reports
         
     return repo_id, category_id
 
-def create_discussion(repo_name, title, body, pat, category_name="Daily Reports"):
+def create_discussion(repo_name, title, body, pat, category_name="Weekly Reports"):
     """Creates a new GitHub Discussion using the GraphQL API."""
     print("---")
     print("Creating GitHub Discussion via GraphQL...")
@@ -425,12 +425,12 @@ def main():
     report_body = analyze_commits_in_bulk(ai_model, important_commits, report_language)
     
     if report_body:
-        report_title = f"Unreal Engine Daily Report - {time.strftime('%Y-%m-%d')}"
+        report_title = f"Unreal Engine Weekly Report - {time.strftime('%Y-%m-%d')}"
         
         # --- 5a. Post to GitHub Discussion ---
         if has_discussion_target:
             print("\n--- 5a. Posting to GitHub Discussion ---")
-            discussion_category = os.environ.get("DISCUSSION_CATEGORY", "Daily Reports")
+            discussion_category = os.environ.get("DISCUSSION_CATEGORY", "Weekly Reports")
             print(f"Attempting to post to repository '{discussion_repo_name}' in category: '{discussion_category}'")
             create_discussion(discussion_repo_name, report_title, report_body, discussion_repo_pat, category_name=discussion_category)
         else:
@@ -461,7 +461,7 @@ def main():
         print("Failed to generate report from AI. No content to post.")
         # Notify on AI failure
         error_message = "Error: Failed to generate the report from AI. No content is available."
-        report_title = f"Unreal Engine Daily Report - {time.strftime('%Y-%m-%d')}"
+        report_title = f"Unreal Engine Weekly Report - {time.strftime('%Y-%m-%d')}"
         if has_slack_target:
             print("\n--- Handling Slack Notification for AI Failure ---")
             send_slack_notification(slack_webhook_url, slack_channel, error_message, report_title)

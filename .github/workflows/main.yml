@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       commit_scan_limit:
-        description: 'Number of recent commits to scan. If empty, the script defaults to the last 24 hours.'
+        description: 'Number of recent commits to scan. If empty, the script defaults to the last 7 days.'
         required: false
         default: ''
       report_language:
@@ -12,7 +12,7 @@ on:
         required: false
         default: ''
       discussion_category:
-        description: 'GitHub Discussion category to post to. Default: Daily Reports'
+        description: 'GitHub Discussion category to post to. Default: Weekly Reports'
         required: false
         default: ''
       gemini_model:
@@ -36,8 +36,8 @@ on:
         required: false
         default: ''
   schedule:
-    # Runs every day at 23:00 UTC (which is 8:00 AM JST)
-    - cron: '0 23 * * *'
+    # Runs every Monday at 00:00 UTC (which is Monday 8:00 AM Beijing Time / 9:00 AM JST)
+    - cron: '0 0 * * 1'
 
 jobs:
   run-update-check:
@@ -47,7 +47,7 @@ jobs:
     permissions:
       contents: write      # To update the state file (e.g., last_processed_commit.txt)
       issues: write        # To create issues for error reporting
-      discussions: write   # To post the daily summary reports
+      discussions: write   # To post the weekly summary reports
 
     env:
       # --- Secrets (Must be configured in repository settings) ---
@@ -62,7 +62,7 @@ jobs:
       # Priority: Manual Input > Repository Variable > Workflow Default
       REPORT_LANGUAGE: ${{ github.event.inputs.report_language || vars.REPORT_LANGUAGE || 'Japanese' }}
       GEMINI_MODEL: ${{ github.event.inputs.gemini_model || vars.GEMINI_MODEL || 'gemini-2.5-pro' }}
-      DISCUSSION_CATEGORY: ${{ github.event.inputs.discussion_category || vars.DISCUSSION_CATEGORY || 'Daily Reports' }}
+      DISCUSSION_CATEGORY: ${{ github.event.inputs.discussion_category || vars.DISCUSSION_CATEGORY || 'Weekly Reports' }}
       COMMIT_SCAN_LIMIT: ${{ github.event.inputs.commit_scan_limit }}
       SLACK_WEBHOOK_URL: ${{ github.event.inputs.slack_webhook_url || secrets.SLACK_WEBHOOK_URL }}
       SLACK_CHANNEL: ${{ github.event.inputs.slack_channel || secrets.SLACK_CHANNEL }}

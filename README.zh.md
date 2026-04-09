@@ -12,16 +12,16 @@
 
 ## 🌟 主要功能
 
--   **自动更新检查：** 使用 GitHub Actions 按计划（每天 UTC 23:00 / 北京时间次日 07:00）或手动检查 UE 仓库中的最新提交。
+-   **自动更新检查：** 使用 GitHub Actions 按计划（每周一 UTC 00:00 / 北京时间 08:00）或手动检查 UE 仓库中的最新提交。
 -   **AI 驱动的总结：** Gemini API 分析提交内容，将其分类为“新功能”和“规格变更”等部分，并为每个部分提供摘要。
--   **发布到 Discussions：** 生成的报告将作为“Unreal Engine Daily Report”发布到仓库的 GitHub Discussions。
+-   **发布到 Discussions：** 生成的报告将作为"Unreal Engine Weekly Report"发布到仓库的 GitHub Discussions。
 -   **Slack 通知：** 报告内容也可以同步发送到指定的 Slack 频道。
 -   **Discord 通知：** 报告内容也可以同步发送到指定的 Discord 频道。
 
 ## 🚀 订阅最新报告
 
 您可以直接订阅更新报告，而无需自己设置此工具。
-在下面的仓库中，每天固定时间生成的报告会自动发布到 GitHub Discussions。
+在下面的仓库中，每周一生成的报告会自动发布到 GitHub Discussions。
 
 [**订阅 UnrealEngine-UpdateTrackerReport 仓库**](https://github.com/pafuhana1213/UnrealEngine-UpdateTrackerReport)
 
@@ -88,11 +88,11 @@
 
 ## 🏃‍♀️ 如何运行
 
--   **自动运行：** 工作流根据配置的计划自动运行（默认每天 UTC 23:00 / 北京时间次日 07:00）。
+-   **自动运行：** 工作流根据配置的计划自动运行（默认每周一 UTC 00:00 / 北京时间 08:00）。
 -   **手动运行：** 您也可以通过访问仓库的 `Actions` 选项卡，选择 `Unreal Engine Update Tracker` 工作流，然后点击 `Run workflow` 按钮来手动运行。**注意：手动运行受限于仓库管理员。**
     -   **Report Language：** 输入报告的语言（例如 `Chinese`, `English`, `Japanese`）。默认值：`Japanese`。
-    -   **Commit Scan Limit：** 指定手动运行要扫描的最近提交数量（默认：过去 24 小时内的提交）。
-    -   **Discussion Category：** 发布报告的 Discussion 类别名称。默认值：`Daily Reports`。
+    -   **Commit Scan Limit：** 指定手动运行要扫描的最近提交数量（默认：过去 7 天内的提交）。
+    -   **Discussion Category：** 发布报告的 Discussion 类别名称。默认值：`Weekly Reports`。
     -   **Gemini Model：** 用于分析的 AI 模型名称。默认值：`gemini-2.5-pro`。
     -   **Slack Webhook URL：** 要使用的临时 Slack Webhook URL，将覆盖 Secret。
     -   **Slack Channel：** 要使用的临时 Slack 频道名称，将覆盖 Secret。
@@ -102,7 +102,7 @@
 -   **更改默认值：**
     您可以通过设置仓库的 **Variables** 来更改计划运行和手动运行的默认值。转到 `Settings` > `Secrets and variables` > `Actions`，在 `Variables` 选项卡中设置以下内容：
     -   `REPORT_LANGUAGE`：默认报告语言（例如 `Chinese`）。
-    -   `DISCUSSION_CATEGORY`：默认发布类别（例如 `Daily Reports`）。
+    -   `DISCUSSION_CATEGORY`：默认发布类别（例如 `Weekly Reports`）。
     -   `GEMINI_MODEL`：默认使用的 AI 模型（例如 `gemini-2.5-pro`）。
     -   `UE_BRANCH`：要监控的分支名称（例如 `release`）。默认值为 `ue5-main`。
 
