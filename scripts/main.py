@@ -1,6 +1,8 @@
 # main.py
 # This script will contain the core logic for checking Unreal Engine updates.
 import os
+import sys
+import traceback
 import requests
 from github import Github, Auth
 from github.GithubException import UnknownObjectException
@@ -41,11 +43,9 @@ def fetch_new_commits(github_client):
         return new_commits
 
     except UnknownObjectException:
-        print(f"Error: Repository '{UE_REPO_NAME}' not found. Check PAT permissions.")
-        return None
+        raise RuntimeError(f"Repository '{UE_REPO_NAME}' not found. Check PAT permissions.")
     except Exception as e:
-        print(f"An unexpected error occurred while fetching commits: {e}")
-        return None
+        raise RuntimeError(f"An unexpected error occurred while fetching commits: {e}") from e
 
 
 def filter_commit(commit):
@@ -121,11 +121,9 @@ Files Changed:
         return response.text
 
     except FileNotFoundError:
-        print("FATAL: prompts/report_prompt.md not found.")
-        return None
+        raise RuntimeError("prompts/report_prompt.md not found.")
     except Exception as e:
-        print(f"Error analyzing commits in bulk with AI: {e}")
-        return None
+        raise RuntimeError(f"Error analyzing commits in bulk with AI: {e}") from e
 
 
 def _run_graphql_query(query, variables, pat):
@@ -296,26 +294,69 @@ def send_discord_notification(webhook_url, message_text, title):
         print(f"An error occurred while sending Discord notification: {e}")
         return False
 
+
+def _convert_markdown_to_feishu(text):
+    """
+    Converts standard Markdown to Feishu-compatible Markdown.
+    Feishu cards do not support # headings or > blockquotes.
+    Lines inside code blocks are left untouched.
+    """
+    lines = text.split('\n')
+    result = []
+    in_code_block = False
+    for line in lines:
+        stripped = line.lstrip()
+        # Track code block boundaries
+        if stripped.startswith('```'):
+            in_code_block = not in_code_block
+            result.append(line)
+            continue
+        # Don't convert anything inside code blocks
+        if in_code_block:
+            result.append(line)
+            continue
+        # Convert headings (# ~ ######) to bold text
+        if stripped.startswith('#'):
+            level_end = 0
+            while level_end < len(stripped) and stripped[level_end] == '#':
+                level_end += 1
+            if level_end <= 6 and level_end < len(stripped) and stripped[level_end] == ' ':
+                heading_text = stripped[level_end + 1:].strip()
+                result.append(f'**{heading_text}**')
+                continue
+        # Convert blockquotes to italic
+        if stripped.startswith('> '):
+            quote_text = stripped[2:].strip()
+            result.append(f'*{quote_text}*')
+            continue
+        result.append(line)
+    return '\n'.join(result)
+
+
 def send_feishu_notification(webhook_url, message_text, title):
     """Sends a notification to a Feishu (Lark) channel via a webhook."""
     print("---")
     print("Sending Feishu notification...")
     try:
-        # Construct Feishu rich text message (post)
+        # Convert standard Markdown to Feishu-compatible format
+        feishu_content = _convert_markdown_to_feishu(message_text)
+        # Use interactive card message to render Markdown
         payload = {
-            "msg_type": "post",
-            "content": {
-                "post": {
-                    "zh_cn": {
-                        "title": title,
-                        "content": [
-                            [{
-                                "tag": "text",
-                                "text": message_text
-                            }]
-                        ]
+            "msg_type": "interactive",
+            "card": {
+                "header": {
+                    "title": {
+                        "tag": "plain_text",
+                        "content": title
+                    },
+                    "template": "blue"
+                },
+                "elements": [
+                    {
+                        "tag": "markdown",
+                        "content": feishu_content
                     }
-                }
+                ]
             }
         }
         
@@ -331,6 +372,32 @@ def send_feishu_notification(webhook_url, message_text, title):
     except requests.exceptions.RequestException as e:
         print(f"An error occurred while sending Feishu notification: {e}")
         return False
+
+def send_error_notifications(error_message, notification_config):
+    """
+    Sends error notifications to all configured channels.
+    notification_config is a dict with keys like 'slack_webhook_url', 'slack_channel',
+    'discord_webhook_url', 'feishu_webhook_url'.
+    """
+    title = f"[ERROR] UE Update Tracker - {time.strftime('%Y-%m-%d')}"
+    print(f"\n--- Sending error notifications: {title} ---")
+
+    if notification_config.get("slack_webhook_url") and notification_config.get("slack_channel"):
+        send_slack_notification(
+            notification_config["slack_webhook_url"],
+            notification_config["slack_channel"],
+            error_message, title)
+
+    if notification_config.get("discord_webhook_url"):
+        send_discord_notification(
+            notification_config["discord_webhook_url"],
+            error_message, title)
+
+    if notification_config.get("feishu_webhook_url"):
+        send_feishu_notification(
+            notification_config["feishu_webhook_url"],
+            error_message, title)
+
 
 def main():
     """
@@ -386,6 +453,14 @@ def main():
         print("FATAL: No notification target is configured. Please set at least one of the following: DISCUSSION_REPO/DISCUSSION_REPO_PAT, SLACK_WEBHOOK_URL/SLACK_CHANNEL, DISCORD_WEBHOOK_URL, or FEISHU_WEBHOOK_URL.")
         return
     
+    # Build notification config for error reporting
+    notification_config = {
+        "slack_webhook_url": slack_webhook_url,
+        "slack_channel": slack_channel,
+        "discord_webhook_url": discord_webhook_url,
+        "feishu_webhook_url": feishu_webhook_url,
+    }
+
     print("Notification target(s) configured correctly.")
     if has_discussion_target:
         print("- GitHub Discussion is enabled.")
@@ -396,13 +471,42 @@ def main():
     if has_feishu_target:
         print("- Feishu Notification is enabled.")
 
+    try:
+        _run_main_pipeline(
+            github_client, ai_client, gemini_model_name,
+            has_discussion_target, discussion_repo_name, discussion_repo_pat,
+            has_slack_target, slack_webhook_url, slack_channel,
+            has_discord_target, discord_webhook_url,
+            has_feishu_target, feishu_webhook_url,
+        )
+    except Exception as e:
+        tb = traceback.format_exc()
+        print(f"\nFATAL: Unhandled exception: {e}\n{tb}")
+        error_message = f"Script failed with an unhandled exception:\n\n```\n{tb}```"
+        send_error_notifications(error_message, notification_config)
+        sys.exit(1)
+
+    # --- Finish ---
+    print("\n=============================================")
+    print("Update Check Script Finished")
+    print("=============================================")
+
+
+def _run_main_pipeline(
+    github_client, ai_client, gemini_model_name,
+    has_discussion_target, discussion_repo_name, discussion_repo_pat,
+    has_slack_target, slack_webhook_url, slack_channel,
+    has_discord_target, discord_webhook_url,
+    has_feishu_target, feishu_webhook_url,
+):
+    """Core pipeline logic. Raises on failure so main() can catch and notify."""
+
     # --- State and Commit Fetching ---
     print("\n--- 3. Fetching Commits ---")
     new_commits = fetch_new_commits(github_client)
 
     if new_commits is None:
-        print("Failed to fetch commits. Exiting.")
-        return
+        raise RuntimeError("Failed to fetch commits from GitHub.")
 
     if not new_commits:
         print("No new commits found since last check. Exiting.")
@@ -424,58 +528,41 @@ def main():
     print(f"Report language set to: {report_language}")
     report_body = analyze_commits_in_bulk(ai_client, gemini_model_name, important_commits, report_language)
     
-    if report_body:
-        report_title = f"Unreal Engine Weekly Report - {time.strftime('%Y-%m-%d')}"
-        
-        # --- 5a. Post to GitHub Discussion ---
-        if has_discussion_target:
-            print("\n--- 5a. Posting to GitHub Discussion ---")
-            discussion_category = os.environ.get("DISCUSSION_CATEGORY", "Weekly Reports")
-            print(f"Attempting to post to repository '{discussion_repo_name}' in category: '{discussion_category}'")
-            create_discussion(discussion_repo_name, report_title, report_body, discussion_repo_pat, category_name=discussion_category)
-        else:
-            print("\n--- 5a. GitHub Discussion target not configured. Skipping. ---")
+    if not report_body:
+        raise RuntimeError("Failed to generate report from AI. No content returned.")
 
-        # --- 5b. Post to Slack ---
-        if has_slack_target:
-            print("\n--- 5b. Posting to Slack ---")
-            send_slack_notification(slack_webhook_url, slack_channel, report_body, report_title)
-        else:
-            print("\n--- 5b. Slack target not configured. Skipping. ---")
-
-        # --- 5c. Post to Discord ---
-        if has_discord_target:
-            print("\n--- 5c. Posting to Discord ---")
-            send_discord_notification(discord_webhook_url, report_body, report_title)
-        else:
-            print("\n--- 5c. Discord target not configured. Skipping. ---")
-
-        # --- 5d. Post to Feishu ---
-        if has_feishu_target:
-            print("\n--- 5d. Posting to Feishu ---")
-            send_feishu_notification(feishu_webhook_url, report_body, report_title)
-        else:
-            print("\n--- 5d. Feishu target not configured. Skipping. ---")
-
+    report_title = f"Unreal Engine Weekly Report - {time.strftime('%Y-%m-%d')}"
+    
+    # --- 5a. Post to GitHub Discussion ---
+    if has_discussion_target:
+        print("\n--- 5a. Posting to GitHub Discussion ---")
+        discussion_category = os.environ.get("DISCUSSION_CATEGORY", "Weekly Reports")
+        print(f"Attempting to post to repository '{discussion_repo_name}' in category: '{discussion_category}'")
+        create_discussion(discussion_repo_name, report_title, report_body, discussion_repo_pat, category_name=discussion_category)
     else:
-        print("Failed to generate report from AI. No content to post.")
-        # Notify on AI failure
-        error_message = "Error: Failed to generate the report from AI. No content is available."
-        report_title = f"Unreal Engine Weekly Report - {time.strftime('%Y-%m-%d')}"
-        if has_slack_target:
-            print("\n--- Handling Slack Notification for AI Failure ---")
-            send_slack_notification(slack_webhook_url, slack_channel, error_message, report_title)
-        if has_discord_target:
-            print("\n--- Handling Discord Notification for AI Failure ---")
-            send_discord_notification(discord_webhook_url, error_message, report_title)
-        if has_feishu_target:
-            print("\n--- Handling Feishu Notification for AI Failure ---")
-            send_feishu_notification(feishu_webhook_url, error_message, report_title)
+        print("\n--- 5a. GitHub Discussion target not configured. Skipping. ---")
 
-    # --- Finish ---
-    print("\n=============================================")
-    print("Update Check Script Finished")
-    print("=============================================")
+    # --- 5b. Post to Slack ---
+    if has_slack_target:
+        print("\n--- 5b. Posting to Slack ---")
+        send_slack_notification(slack_webhook_url, slack_channel, report_body, report_title)
+    else:
+        print("\n--- 5b. Slack target not configured. Skipping. ---")
+
+    # --- 5c. Post to Discord ---
+    if has_discord_target:
+        print("\n--- 5c. Posting to Discord ---")
+        send_discord_notification(discord_webhook_url, report_body, report_title)
+    else:
+        print("\n--- 5c. Discord target not configured. Skipping. ---")
+
+    # --- 5d. Post to Feishu ---
+    if has_feishu_target:
+        print("\n--- 5d. Posting to Feishu ---")
+        send_feishu_notification(feishu_webhook_url, report_body, report_title)
+    else:
+        print("\n--- 5d. Feishu target not configured. Skipping. ---")
+
 
 if __name__ == "__main__":
     main()
