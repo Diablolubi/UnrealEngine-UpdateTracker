@@ -2,7 +2,7 @@
 
 [Read this in Japanese](README.md) | [中文版](README.zh.md)
 
-This project is an automated service that periodically monitors updates to Unreal Engine's private GitHub repository, summarizes important changes (such as new features and specification changes) using AI (Google Gemini), and posts them as reports to GitHub Discussions.
+This project is an automated service that periodically monitors updates to Unreal Engine's private GitHub repository, summarizes important changes (such as new features and specification changes) using AI (DeepSeek), and posts them as reports to GitHub Discussions.
 
 <table><tr><td>
 <img width="644" alt="image" src="https://github.com/pafuhana1213/Screenshot/blob/master/Report_sample_en.png" />
@@ -13,7 +13,7 @@ Note: This image is an example of a report, and the content shown is entirely du
 ## 🌟 Key Features
 
 -   **Automatic Update Checks:** Uses GitHub Actions to check for the latest commits in the UE repository on a schedule (every Monday 8:00 AM Beijing Time / Monday 00:00 UTC) or manually.
--   **AI-Powered Summaries:** The Gemini API analyzes commit contents, categorizes them into sections like "New Features" and "Specification Changes," and provides a summary for each.
+-   **AI-Powered Summaries:** The DeepSeek API analyzes commit contents, categorizes them into sections like "New Features" and "Specification Changes," and provides a summary for each.
 -   **Posting to Discussions:** The generated report is posted to the repository's GitHub Discussions as "Unreal Engine Weekly Report."
 -   **Slack Notifications:** The report content can also be sent simultaneously to a specified Slack channel.
 -   **Discord Notifications:** The report content can also be sent simultaneously to a specified Discord channel.
@@ -48,7 +48,7 @@ If you find this tool useful, please consider supporting its development through
 2.  **Set Up Basic Secrets:**
     First, register the following secrets, which are essential for the tool to operate, in your repository's `Settings` > `Secrets and variables` > `Actions`.
     -   `UE_REPO_PAT`: A [Personal Access Token (PAT)](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens) with read access to the private Unreal Engine repository (`EpicGames/UnrealEngine`).
-    -   `GEMINI_API_KEY`: The API key obtained from [Google AI Studio](https://aistudio.google.com/app/apikey).
+    -   `DEEPSEEK_API_KEY`: The API key obtained from [DeepSeek Platform](https://platform.deepseek.com/api_keys).
 
 3.  **Configure Notification Targets (At least one is required):**
     Next, choose and configure where you want to receive the reports. You can set up **GitHub Discussions**, **Slack**, **Discord**, **Feishu**, or any combination of them.
@@ -93,7 +93,7 @@ It is strongly recommended to set `DISCUSSION_REPO` to a **fork of the Unreal En
     -   **Report Language:** Enter the language for the report (e.g., `English`, `Japanese`). Default: `Japanese`.
     -   **Commit Scan Limit:** Specify the number of recent commits to scan for manual runs (default: last 7 days).
     -   **Discussion Category:** The name of the Discussion category to post the report to. Default: `Weekly Reports`.
-    -   **Gemini Model:** The name of the AI model to use for analysis. Default: `gemini-2.5-pro`.
+    -   **DeepSeek Model:** The name of the AI model to use for analysis. Default: `deepseek-v4-flash`.
     -   **Slack Webhook URL:** A temporary Slack Webhook URL to use, overriding the secret.
     -   **Slack Channel:** A temporary Slack channel name to use, overriding the secret.
     -   **Discord Webhook URL:** A temporary Discord Webhook URL to use, overriding the secret.
@@ -103,7 +103,7 @@ It is strongly recommended to set `DISCUSSION_REPO` to a **fork of the Unreal En
     You can change the default values for scheduled and manual runs by setting repository **Variables**. Go to `Settings` > `Secrets and variables` > `Actions`, and from the `Variables` tab, set the following:
     -   `REPORT_LANGUAGE`: The default report language (e.g., `English`).
     -   `DISCUSSION_CATEGORY`: The default category for posts (e.g., `Announcements`).
-    -   `GEMINI_MODEL`: The default AI model to use (e.g., `gemini-2.5-pro`).
+    -   `DEEPSEEK_MODEL`: The default AI model to use (e.g., `deepseek-v4-flash`).
     -   `UE_BRANCH`: The name of the branch to monitor (e.g., `release`). Defaults to `ue5-main`.
 
 ## 🎨 Customization
@@ -121,7 +121,7 @@ If you want to change the format, such as requesting more detailed reports or em
 -   **User Responsibility:** While this tool is carefully designed to comply with the Unreal Engine license agreement, the ultimate operational responsibility lies with the user. Specifically, you must **always specify a private repository with restricted access** as the destination for reports (`DISCUSSION_REPO`). Posting to a public repository could constitute a license violation.
 
 -   **API Keys and Billing:**
-    *   This tool uses the Google Gemini API, which may incur costs based on usage.
+    *   This tool uses the DeepSeek API, which may incur costs based on usage.
     *   If you fork and use this repository, **the owner of the forked repository assumes all billing responsibility for their API key.**
     *   To ensure strict compliance with Unreal Engine's terms, **it is strongly recommended to use an API key from a license plan where submitted data is not used for AI training.**
 

@@ -6,7 +6,7 @@ import traceback
 import requests
 from github import Github, Auth
 from github.GithubException import UnknownObjectException
-from google import genai
+from openai import OpenAI
 import time
 from datetime import datetime, timedelta
 
@@ -72,7 +72,7 @@ def filter_commit(commit):
 
 def analyze_commits_in_bulk(client, model_name, commits, report_language="Japanese"):
     """
-    Analyzes a list of commits in bulk with the Gemini API and returns a formatted Markdown report.
+    Analyzes a list of commits in bulk with the DeepSeek API and returns a formatted Markdown report.
     """
     print(f"Aggregating {len(commits)} commits for bulk analysis...")
     
@@ -104,21 +104,28 @@ Files Changed:
             aggregated_commits=aggregated_commits
         )
 
-        print(f"  > Sending aggregated prompt to Gemini for {len(commits)} commits (Language: {report_language})...")
+        print(f"  > Sending aggregated prompt to DeepSeek for {len(commits)} commits (Language: {report_language})...")
         
         # --- Start of Detailed Logging ---
         # print(f"\n--- BULK PROMPT ---\n{prompt}\n--------------------")
         # --- End of Detailed Logging ---
 
-        response = client.models.generate_content(model=model_name, contents=prompt)
+        response = client.chat.completions.create(
+            model=model_name,
+            messages=[
+                {"role": "user", "content": prompt},
+            ],
+            stream=False,
+        )
+        response_text = response.choices[0].message.content
         
         # --- Start of Detailed Logging ---
-        print(f"--- BULK RESPONSE ---\n{response.text}\n--------------------\n")
+        print(f"--- BULK RESPONSE ---\n{response_text}\n--------------------\n")
         # --- End of Detailed Logging ---
 
-        print(f"  < Received bulk response from Gemini.")
+        print(f"  < Received bulk response from DeepSeek.")
         
-        return response.text
+        return response_text
 
     except FileNotFoundError:
         raise RuntimeError("prompts/report_prompt.md not found.")
@@ -410,27 +417,27 @@ def main():
     # --- API Setup ---
     print("\n--- 1. Setting up APIs ---")
     pat = os.environ.get("UE_REPO_PAT")
-    gemini_api_key = os.environ.get("GEMINI_API_KEY")
+    deepseek_api_key = os.environ.get("DEEPSEEK_API_KEY")
     
     if not pat:
         print("FATAL: UE_REPO_PAT environment variable not set.")
         return
     print("UE_REPO_PAT found.")
         
-    if not gemini_api_key:
-        print("FATAL: GEMINI_API_KEY environment variable not set.")
+    if not deepseek_api_key:
+        print("FATAL: DEEPSEEK_API_KEY environment variable not set.")
         return
-    print("GEMINI_API_KEY found.")
+    print("DEEPSEEK_API_KEY found.")
     
     try:
         print("Initializing GitHub client...")
         github_client = Github(auth=Auth.Token(pat))
         print("GitHub client initialized.")
         
-        gemini_model_name = os.environ.get("GEMINI_MODEL", "gemini-2.5-pro")
-        print(f"Configuring Gemini API with model: {gemini_model_name}...")
-        ai_client = genai.Client(api_key=gemini_api_key)
-        print("Gemini API configured.")
+        deepseek_model_name = os.environ.get("DEEPSEEK_MODEL", "deepseek-v4-flash")
+        print(f"Configuring DeepSeek API with model: {deepseek_model_name}...")
+        ai_client = OpenAI(api_key=deepseek_api_key, base_url="https://api.deepseek.com")
+        print("DeepSeek API configured.")
     except Exception as e:
         print(f"FATAL: Failed to initialize APIs: {e}")
         return
@@ -473,7 +480,7 @@ def main():
 
     try:
         _run_main_pipeline(
-            github_client, ai_client, gemini_model_name,
+            github_client, ai_client, deepseek_model_name,
             has_discussion_target, discussion_repo_name, discussion_repo_pat,
             has_slack_target, slack_webhook_url, slack_channel,
             has_discord_target, discord_webhook_url,
@@ -493,7 +500,7 @@ def main():
 
 
 def _run_main_pipeline(
-    github_client, ai_client, gemini_model_name,
+    github_client, ai_client, deepseek_model_name,
     has_discussion_target, discussion_repo_name, discussion_repo_pat,
     has_slack_target, slack_webhook_url, slack_channel,
     has_discord_target, discord_webhook_url,
@@ -526,7 +533,7 @@ def _run_main_pipeline(
     print("\n--- 5. Generating and Sending Report ---")
     report_language = os.environ.get("REPORT_LANGUAGE", "Japanese")
     print(f"Report language set to: {report_language}")
-    report_body = analyze_commits_in_bulk(ai_client, gemini_model_name, important_commits, report_language)
+    report_body = analyze_commits_in_bulk(ai_client, deepseek_model_name, important_commits, report_language)
     
     if not report_body:
         raise RuntimeError("Failed to generate report from AI. No content returned.")

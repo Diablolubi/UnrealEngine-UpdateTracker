@@ -2,7 +2,7 @@
 
 [English version](README.en.md) | [中文版](README.zh.md)
 
-このプロジェクトは、Unreal EngineのプライベートGitHubリポジトリの更新を定期的に監視し、AI（Google Gemini）を使って重要な変更（新機能、仕様変更など）を要約し、GitHub Discussionsにレポートとして投稿する自動化サービスです。
+このプロジェクトは、Unreal EngineのプライベートGitHubリポジトリの更新を定期的に監視し、AI（DeepSeek）を使って重要な変更（新機能、仕様変更など）を要約し、GitHub Discussionsにレポートとして投稿する自動化サービスです。
 
 <table><tr><td>
 <img width="644" alt="image" src="https://github.com/pafuhana1213/Screenshot/blob/master/Report_sample_jp.png" />
@@ -13,7 +13,7 @@
 ## 🌟 主な機能
 
 -   **自動更新チェック:** GitHub Actionsを使い、スケジュール (毎週月曜日 日本時間午前9時 / 月曜日 UTC 00:00) または手動でUEリポジトリの最新コミットをチェックします。
--   **AIによる要約:** Gemini APIがコミット内容を分析し、「新機能」「仕様変更」などのカテゴリに分類し、内容を要約します。
+-   **AIによる要約:** DeepSeek APIがコミット内容を分析し、「新機能」「仕様変更」などのカテゴリに分類し、内容を要約します。
 -   **Discussionへの投稿:** 生成されたレポートを、リポジリのGitHub Discussionsに「Unreal Engine Weekly Report」として投稿します。
 -   **Slack通知:** レポートの内容を、指定したSlackチャンネルにも同時に通知できます。
 -   **Discord通知:** レポートの内容を、指定したDiscordチャンネルにも同時に通知できます。
@@ -48,7 +48,7 @@
 2.  **基本シークレットの設定:**
     まず、ツールの動作に必須となる以下のシークレットを、リポジトリの `Settings` > `Secrets and variables` > `Actions` に登録します。
     -   `UE_REPO_PAT`: Unreal Engineのプライベートリポジトリ (`EpicGames/UnrealEngine`) への読み取りアクセス権を持つ[Personal Access Token (PAT)](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens)を登録します。
-    -   `GEMINI_API_KEY`: [Google AI Studio](https://aistudio.google.com/app/apikey) で取得したAPIキーを登録します。
+    -   `DEEPSEEK_API_KEY`: [DeepSeek Platform](https://platform.deepseek.com/api_keys) で取得したAPIキーを登録します。
 
 3.  **通知先の設定 (少なくとも1つ必須):**
     次に、レポートの通知先を選択し、設定します。**GitHub Discussion**, **Slack**, **Discord** のいずれか、またはすべてを設定できます。
@@ -87,7 +87,7 @@
     -   **Report Language:** レポートを出力したい言語を自由に入力します（例: `Japanese`, `English`）。デフォルトは `Japanese` です。
     -   **Commit Scan Limit:** 手動実行時にスキャンする最新コミット数を指定できます。（デフォルト: 過去7日間）
     -   **Discussion Category:** レポートを投稿するDiscussionカテゴリ名。デフォルトは `Weekly Reports` です。
-    -   **Gemini Model:** 解析に使用するAIモデル名。デフォルトは `gemini-2.5-pro` です。
+    -   **DeepSeek Model:** 解析に使用するAIモデル名。デフォルトは `deepseek-v4-flash` です。
     -   **Slack Webhook URL:** 一時的に使用するSlack Webhook URL。Secretの値を上書きします。
     -   **Slack Channel:** 一時的に使用するSlackチャンネル名。Secretの値を上書きします。
     -   **Discord Webhook URL:** 一時的に使用するDiscord Webhook URL。Secretの値を上書きします。
@@ -96,7 +96,7 @@
     スケジュール実行時や手動実行時のデフォルト値は、リポジトリの **Variables** で設定することで変更できます。`Settings` > `Secrets and variables` > `Actions` の `Variables` タブから、以下の変数を設定します。
     -   `REPORT_LANGUAGE`: デフォルトのレポート言語（例: `English`）
     -   `DISCUSSION_CATEGORY`: デフォルトの投稿先カテゴリ名（例: `Weekly Reports`）
-    -   `GEMINI_MODEL`: デフォルトで使用するAIモデル（例: `gemini-2.5-pro`）
+    -   `DEEPSEEK_MODEL`: デフォルトで使用するAIモデル（例: `deepseek-v4-flash`）
     -   `UE_BRANCH`: 監視対象のブランチ名（例: `release`）。デフォルトは `ue5-main` です。
 
 ## 🎨 カスタマイズ
@@ -114,7 +114,7 @@
 -   **利用者の責任:** このツールは、Unreal Engineのライセンス契約を遵守するよう慎重に設計されていますが、最終的な運用責任は利用者にあります。特に、レポートの投稿先 (`DISCUSSION_REPO`) には、**必ずアクセスが制限されたプライベートリポジトリを指定してください。** 公開リポジトリに投稿した場合、ライセンス違反となる可能性があります。
 
 -   **APIキーと課金:**
-    *   本ツールはGoogle Gemini APIを利用しており、利用量に応じた料金が発生する場合があります。
+    *   本ツールはDeepSeek APIを利用しており、利用量に応じた料金が発生する場合があります。
     *   このリポジトリをフォークして利用する場合、**フォークしたリポジトリのオーナーが自身のAPIキーに対する全ての課金責任を負います。**
     *   Unreal Engineの規約を確実に遵守するため、**送信データがAIの学習に利用されないライセンスのAPIキーを使用することを強く推奨します。**
 

@@ -1,8 +1,8 @@
 # For GitHub API
 PyGithub
 
-# For Google Gemini API
-google-genai
+# For DeepSeek API through its OpenAI-compatible interface
+openai
 
 # For local development (reading .env files)
 python-dotenv

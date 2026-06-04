@@ -15,8 +15,8 @@ on:
         description: 'GitHub Discussion category to post to. Default: Weekly Reports'
         required: false
         default: ''
-      gemini_model:
-        description: 'The Gemini model to use for analysis. Default: gemini-2.5-pro'
+      deepseek_model:
+        description: 'The DeepSeek model to use for analysis. Default: deepseek-v4-flash'
         required: false
         default: ''
       slack_webhook_url:
@@ -52,7 +52,7 @@ jobs:
     env:
       # --- Secrets (Must be configured in repository settings) ---
       UE_REPO_PAT: ${{ secrets.UE_REPO_PAT }}
-      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
       DISCUSSION_REPO: ${{ secrets.DISCUSSION_REPO || github.repository }}
       DISCUSSION_REPO_PAT: ${{ secrets.DISCUSSION_REPO_PAT }}
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -61,7 +61,7 @@ jobs:
       # The script will use the following environment variables.
       # Priority: Manual Input > Repository Variable > Workflow Default
       REPORT_LANGUAGE: ${{ github.event.inputs.report_language || vars.REPORT_LANGUAGE || 'Japanese' }}
-      GEMINI_MODEL: ${{ github.event.inputs.gemini_model || vars.GEMINI_MODEL || 'gemini-2.5-pro' }}
+      DEEPSEEK_MODEL: ${{ github.event.inputs.deepseek_model || vars.DEEPSEEK_MODEL || 'deepseek-v4-flash' }}
       DISCUSSION_CATEGORY: ${{ github.event.inputs.discussion_category || vars.DISCUSSION_CATEGORY || 'Weekly Reports' }}
       COMMIT_SCAN_LIMIT: ${{ github.event.inputs.commit_scan_limit }}
       SLACK_WEBHOOK_URL: ${{ github.event.inputs.slack_webhook_url || secrets.SLACK_WEBHOOK_URL }}

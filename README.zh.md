@@ -2,7 +2,7 @@
 
 [English version](README.en.md) | [日本語版](README.md)
 
-本项目是一个自动化服务，定期监控 Unreal Engine 私有 GitHub 仓库的更新，使用 AI (Google Gemini) 总结重要变更（如新功能、规格变更），并将其作为报告发布到 GitHub Discussions。
+本项目是一个自动化服务，定期监控 Unreal Engine 私有 GitHub 仓库的更新，使用 AI (DeepSeek) 总结重要变更（如新功能、规格变更），并将其作为报告发布到 GitHub Discussions。
 
 <table><tr><td>
 <img width="644" alt="image" src="https://github.com/pafuhana1213/Screenshot/blob/master/Report_sample_en.png" />
@@ -13,7 +13,7 @@
 ## 🌟 主要功能
 
 -   **自动更新检查：** 使用 GitHub Actions 按计划（每周一 UTC 00:00 / 北京时间 08:00）或手动检查 UE 仓库中的最新提交。
--   **AI 驱动的总结：** Gemini API 分析提交内容，将其分类为“新功能”和“规格变更”等部分，并为每个部分提供摘要。
+-   **AI 驱动的总结：** DeepSeek API 分析提交内容，将其分类为“新功能”和“规格变更”等部分，并为每个部分提供摘要。
 -   **发布到 Discussions：** 生成的报告将作为"Unreal Engine Weekly Report"发布到仓库的 GitHub Discussions。
 -   **Slack 通知：** 报告内容也可以同步发送到指定的 Slack 频道。
 -   **Discord 通知：** 报告内容也可以同步发送到指定的 Discord 频道。
@@ -48,7 +48,7 @@
 2.  **设置基础 Secrets：**
     首先，在仓库的 `Settings` > `Secrets and variables` > `Actions` 中注册以下对工具运行至关重要的 Secrets。
     -   `UE_REPO_PAT`：一个具有私有 Unreal Engine 仓库 (`EpicGames/UnrealEngine`) 读取权限的 [个人访问令牌 (PAT)](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens)。
-    -   `GEMINI_API_KEY`：从 [Google AI Studio](https://aistudio.google.com/app/apikey) 获取的 API 密钥。
+    -   `DEEPSEEK_API_KEY`：从 [DeepSeek Platform](https://platform.deepseek.com/api_keys) 获取的 API 密钥。
 
 3.  **配置通知目标（至少需要一个）：**
     接下来，选择并配置您希望接收报告的位置。您可以设置 **GitHub Discussions**、**Slack**、**Discord**、**飞书 (Feishu)** 或其中的任何组合。
@@ -93,7 +93,7 @@
     -   **Report Language：** 输入报告的语言（例如 `Chinese`, `English`, `Japanese`）。默认值：`Japanese`。
     -   **Commit Scan Limit：** 指定手动运行要扫描的最近提交数量（默认：过去 7 天内的提交）。
     -   **Discussion Category：** 发布报告的 Discussion 类别名称。默认值：`Weekly Reports`。
-    -   **Gemini Model：** 用于分析的 AI 模型名称。默认值：`gemini-2.5-pro`。
+    -   **DeepSeek Model：** 用于分析的 AI 模型名称。默认值：`deepseek-v4-flash`。
     -   **Slack Webhook URL：** 要使用的临时 Slack Webhook URL，将覆盖 Secret。
     -   **Slack Channel：** 要使用的临时 Slack 频道名称，将覆盖 Secret。
     -   **Discord Webhook URL：** 要使用的临时 Discord Webhook URL，将覆盖 Secret。
@@ -103,7 +103,7 @@
     您可以通过设置仓库的 **Variables** 来更改计划运行和手动运行的默认值。转到 `Settings` > `Secrets and variables` > `Actions`，在 `Variables` 选项卡中设置以下内容：
     -   `REPORT_LANGUAGE`：默认报告语言（例如 `Chinese`）。
     -   `DISCUSSION_CATEGORY`：默认发布类别（例如 `Weekly Reports`）。
-    -   `GEMINI_MODEL`：默认使用的 AI 模型（例如 `gemini-2.5-pro`）。
+    -   `DEEPSEEK_MODEL`：默认使用的 AI 模型（例如 `deepseek-v4-flash`）。
     -   `UE_BRANCH`：要监控的分支名称（例如 `release`）。默认值为 `ue5-main`。
 
 ## 🎨 自定义
@@ -121,7 +121,7 @@
 -   **用户责任：** 虽然此工具经过精心设计以符合 Unreal Engine 许可协议，但最终的操作责任在于用户。具体而言，您必须**始终指定一个访问受限的私有仓库**作为报告的目标位置 (`DISCUSSION_REPO`)。发布到公共仓库可能会构成违反许可协议。
 
 -   **API 密钥和计费：**
-    *   此工具使用 Google Gemini API，可能会根据使用情况产生费用。
+    *   此工具使用 DeepSeek API，可能会根据使用情况产生费用。
     *   如果您 Fork 并使用此仓库，**Fork 仓库的所有者承担其 API 密钥的所有计费责任。**
     *   为了确保严格遵守 Unreal Engine 的条款，**强烈建议使用提交的数据不用于 AI 训练的许可方案下的 API 密钥。**
 
