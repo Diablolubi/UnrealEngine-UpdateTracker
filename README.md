@@ -84,7 +84,7 @@
 
 -   **自動実行:** 設定されたスケジュール (デフォルトでは毎週月曜日 日本時間午前9時 / 月曜日 UTC 00:00) になると、自動的にワークフローが実行されます。
 -   **手動実行:** リポジトリの`Actions`タブに移動し、`Unreal Engine Update Tracker`ワークフローを選択して、`Run workflow`ボタンから手動で実行することも可能です。**注意: 手動実行はリポジトリの管理者のみが可能です。**
-    -   **Report Language:** レポートを出力したい言語を自由に入力します（例: `Japanese`, `English`）。デフォルトは `Japanese` です。
+    -   **Report Language:** レポートを出力したい言語を自由に入力します（例: `Chinese`, `Japanese`, `English`）。デフォルトは `Chinese` です。
     -   **Commit Scan Limit:** 手動実行時にスキャンする最新コミット数を指定できます。（デフォルト: 過去7日間）
     -   **Discussion Category:** レポートを投稿するDiscussionカテゴリ名。デフォルトは `Weekly Reports` です。
     -   **DeepSeek Model:** 解析に使用するAIモデル名。デフォルトは `deepseek-v4-flash` です。
@@ -94,7 +94,7 @@
 
 -   **各種デフォルト値の変更:**
     スケジュール実行時や手動実行時のデフォルト値は、リポジトリの **Variables** で設定することで変更できます。`Settings` > `Secrets and variables` > `Actions` の `Variables` タブから、以下の変数を設定します。
-    -   `REPORT_LANGUAGE`: デフォルトのレポート言語（例: `English`）
+    -   `REPORT_LANGUAGE`: デフォルトのレポート言語（例: `Chinese`）
     -   `DISCUSSION_CATEGORY`: デフォルトの投稿先カテゴリ名（例: `Weekly Reports`）
     -   `DEEPSEEK_MODEL`: デフォルトで使用するAIモデル（例: `deepseek-v4-flash`）
     -   `UE_BRANCH`: 監視対象のブランチ名（例: `release`）。デフォルトは `ue5-main` です。

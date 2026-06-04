@@ -90,7 +90,7 @@
 
 -   **自动运行：** 工作流根据配置的计划自动运行（默认每周一 UTC 00:00 / 北京时间 08:00）。
 -   **手动运行：** 您也可以通过访问仓库的 `Actions` 选项卡，选择 `Unreal Engine Update Tracker` 工作流，然后点击 `Run workflow` 按钮来手动运行。**注意：手动运行受限于仓库管理员。**
-    -   **Report Language：** 输入报告的语言（例如 `Chinese`, `English`, `Japanese`）。默认值：`Japanese`。
+    -   **Report Language：** 输入报告的语言（例如 `Chinese`, `English`, `Japanese`）。默认值：`Chinese`。
     -   **Commit Scan Limit：** 指定手动运行要扫描的最近提交数量（默认：过去 7 天内的提交）。
     -   **Discussion Category：** 发布报告的 Discussion 类别名称。默认值：`Weekly Reports`。
     -   **DeepSeek Model：** 用于分析的 AI 模型名称。默认值：`deepseek-v4-flash`。

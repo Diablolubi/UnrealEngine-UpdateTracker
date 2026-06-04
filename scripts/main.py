@@ -70,7 +70,7 @@ def filter_commit(commit):
     return True
 
 
-def analyze_commits_in_bulk(client, model_name, commits, report_language="Japanese"):
+def analyze_commits_in_bulk(client, model_name, commits, report_language="Chinese"):
     """
     Analyzes a list of commits in bulk with the DeepSeek API and returns a formatted Markdown report.
     """
@@ -531,7 +531,7 @@ def _run_main_pipeline(
 
     # --- Generate Report and Post Discussion ---
     print("\n--- 5. Generating and Sending Report ---")
-    report_language = os.environ.get("REPORT_LANGUAGE", "Japanese")
+    report_language = os.environ.get("REPORT_LANGUAGE", "Chinese")
     print(f"Report language set to: {report_language}")
     report_body = analyze_commits_in_bulk(ai_client, deepseek_model_name, important_commits, report_language)
     

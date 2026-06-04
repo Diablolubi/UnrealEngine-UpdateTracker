@@ -86,6 +86,16 @@ class AnalyzeCommitsTests(unittest.TestCase):
         self.assertIn("Add Nanite renderer update", prompt)
         self.assertIn("Engine/Source/Runtime/Renderer/File.cpp", prompt)
 
+    def test_analyze_commits_defaults_to_chinese_report_language(self):
+        main = load_main_module()
+        client = FakeDeepSeekClient()
+
+        main.analyze_commits_in_bulk(client, "deepseek-v4-flash", [make_commit()])
+
+        prompt = client.calls[0]["messages"][0]["content"]
+        self.assertIn("Chinese", prompt)
+        self.assertNotIn("Japanese", prompt)
+
 
 if __name__ == "__main__":
     unittest.main()

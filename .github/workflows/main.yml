@@ -8,7 +8,7 @@ on:
         required: false
         default: ''
       report_language:
-        description: 'Language for the report (e.g., Japanese, English). Default: Japanese'
+        description: 'Language for the report (e.g., Chinese, English, Japanese). Default: Chinese'
         required: false
         default: ''
       discussion_category:
@@ -60,7 +60,7 @@ jobs:
       # --- Dynamic Configuration ---
       # The script will use the following environment variables.
       # Priority: Manual Input > Repository Variable > Workflow Default
-      REPORT_LANGUAGE: ${{ github.event.inputs.report_language || vars.REPORT_LANGUAGE || 'Japanese' }}
+      REPORT_LANGUAGE: ${{ github.event.inputs.report_language || vars.REPORT_LANGUAGE || 'Chinese' }}
       DEEPSEEK_MODEL: ${{ github.event.inputs.deepseek_model || vars.DEEPSEEK_MODEL || 'deepseek-v4-flash' }}
       DISCUSSION_CATEGORY: ${{ github.event.inputs.discussion_category || vars.DISCUSSION_CATEGORY || 'Weekly Reports' }}
       COMMIT_SCAN_LIMIT: ${{ github.event.inputs.commit_scan_limit }}

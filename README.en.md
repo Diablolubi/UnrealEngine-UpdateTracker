@@ -90,7 +90,7 @@ It is strongly recommended to set `DISCUSSION_REPO` to a **fork of the Unreal En
 
 -   **Automatic Execution:** The workflow runs automatically on the configured schedule (defaults to every Monday 8:00 AM Beijing Time / Monday 00:00 UTC).
 -   **Manual Execution:** You can also run it manually by going to the repository's `Actions` tab, selecting the `Unreal Engine Update Tracker` workflow, and clicking the `Run workflow` button. **Note: Manual execution is restricted to repository administrators.**
-    -   **Report Language:** Enter the language for the report (e.g., `English`, `Japanese`). Default: `Japanese`.
+    -   **Report Language:** Enter the language for the report (e.g., `Chinese`, `English`, `Japanese`). Default: `Chinese`.
     -   **Commit Scan Limit:** Specify the number of recent commits to scan for manual runs (default: last 7 days).
     -   **Discussion Category:** The name of the Discussion category to post the report to. Default: `Weekly Reports`.
     -   **DeepSeek Model:** The name of the AI model to use for analysis. Default: `deepseek-v4-flash`.
@@ -101,7 +101,7 @@ It is strongly recommended to set `DISCUSSION_REPO` to a **fork of the Unreal En
 
 -   **Changing Default Values:**
     You can change the default values for scheduled and manual runs by setting repository **Variables**. Go to `Settings` > `Secrets and variables` > `Actions`, and from the `Variables` tab, set the following:
-    -   `REPORT_LANGUAGE`: The default report language (e.g., `English`).
+    -   `REPORT_LANGUAGE`: The default report language (e.g., `Chinese`).
     -   `DISCUSSION_CATEGORY`: The default category for posts (e.g., `Announcements`).
     -   `DEEPSEEK_MODEL`: The default AI model to use (e.g., `deepseek-v4-flash`).
     -   `UE_BRANCH`: The name of the branch to monitor (e.g., `release`). Defaults to `ue5-main`.
