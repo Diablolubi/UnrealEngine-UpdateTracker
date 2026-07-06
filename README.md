@@ -97,7 +97,7 @@
     -   `REPORT_LANGUAGE`: デフォルトのレポート言語（例: `Chinese`）
     -   `DISCUSSION_CATEGORY`: デフォルトの投稿先カテゴリ名（例: `Weekly Reports`）
     -   `DEEPSEEK_MODEL`: デフォルトで使用するAIモデル（例: `deepseek-v4-flash`）
-    -   `UE_BRANCH`: 監視対象のブランチ名（例: `release`）。デフォルトは `ue5-main` です。
+    -   `UE_BRANCH`: 監視対象のブランチ名（例: `release`）。デフォルトは `ue6-main` です。
 
 ## 🎨 カスタマイズ
 

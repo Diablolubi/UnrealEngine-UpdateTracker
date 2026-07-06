@@ -13,7 +13,7 @@ from datetime import datetime, timedelta
 UE_REPO_NAME = "EpicGames/UnrealEngine" # Target repository
 raw_limit = os.environ.get("COMMIT_SCAN_LIMIT") # Keep for manual override
 COMMIT_SCAN_LIMIT = int(raw_limit) if raw_limit and raw_limit.isdigit() else None
-UE_BRANCH = os.environ.get("UE_BRANCH", "ue5-main") # Target branch
+UE_BRANCH = os.environ.get("UE_BRANCH", "ue6-main") # Target branch
 
 
 def fetch_new_commits(github_client):

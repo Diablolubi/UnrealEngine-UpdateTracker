@@ -104,7 +104,7 @@ It is strongly recommended to set `DISCUSSION_REPO` to a **fork of the Unreal En
     -   `REPORT_LANGUAGE`: The default report language (e.g., `Chinese`).
     -   `DISCUSSION_CATEGORY`: The default category for posts (e.g., `Announcements`).
     -   `DEEPSEEK_MODEL`: The default AI model to use (e.g., `deepseek-v4-flash`).
-    -   `UE_BRANCH`: The name of the branch to monitor (e.g., `release`). Defaults to `ue5-main`.
+    -   `UE_BRANCH`: The name of the branch to monitor (e.g., `release`). Defaults to `ue6-main`.
 
 ## 🎨 Customization
 

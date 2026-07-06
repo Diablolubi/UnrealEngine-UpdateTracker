@@ -104,7 +104,7 @@
     -   `REPORT_LANGUAGE`：默认报告语言（例如 `Chinese`）。
     -   `DISCUSSION_CATEGORY`：默认发布类别（例如 `Weekly Reports`）。
     -   `DEEPSEEK_MODEL`：默认使用的 AI 模型（例如 `deepseek-v4-flash`）。
-    -   `UE_BRANCH`：要监控的分支名称（例如 `release`）。默认值为 `ue5-main`。
+    -   `UE_BRANCH`：要监控的分支名称（例如 `release`）。默认值为 `ue6-main`。
 
 ## 🎨 自定义
 

@@ -1,7 +1,9 @@
 import importlib.util
+import os
 import sys
 import types
 import unittest
+from unittest import mock
 from pathlib import Path
 
 
@@ -95,6 +97,29 @@ class AnalyzeCommitsTests(unittest.TestCase):
         prompt = client.calls[0]["messages"][0]["content"]
         self.assertIn("Chinese", prompt)
         self.assertNotIn("Japanese", prompt)
+
+
+class BranchConfigurationTests(unittest.TestCase):
+    def test_default_branch_is_ue6_main(self):
+        with mock.patch.dict(os.environ, {}, clear=False):
+            os.environ.pop("UE_BRANCH", None)
+            main = load_main_module()
+
+        self.assertEqual(main.UE_BRANCH, "ue6-main")
+
+    def test_env_branch_overrides_default(self):
+        with mock.patch.dict(os.environ, {"UE_BRANCH": "release"}, clear=False):
+            main = load_main_module()
+
+        self.assertEqual(main.UE_BRANCH, "release")
+
+    def test_workflow_passes_branch_variable_to_script(self):
+        workflow = (ROOT / ".github" / "workflows" / "main.yml").read_text(
+            encoding="utf-8"
+        )
+
+        self.assertIn("UE_BRANCH:", workflow)
+        self.assertIn("vars.UE_BRANCH || 'ue6-main'", workflow)
 
 
 if __name__ == "__main__":

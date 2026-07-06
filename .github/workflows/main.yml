@@ -63,6 +63,7 @@ jobs:
       REPORT_LANGUAGE: ${{ github.event.inputs.report_language || vars.REPORT_LANGUAGE || 'Chinese' }}
       DEEPSEEK_MODEL: ${{ github.event.inputs.deepseek_model || vars.DEEPSEEK_MODEL || 'deepseek-v4-flash' }}
       DISCUSSION_CATEGORY: ${{ github.event.inputs.discussion_category || vars.DISCUSSION_CATEGORY || 'Weekly Reports' }}
+      UE_BRANCH: ${{ vars.UE_BRANCH || 'ue6-main' }}
       COMMIT_SCAN_LIMIT: ${{ github.event.inputs.commit_scan_limit }}
       SLACK_WEBHOOK_URL: ${{ github.event.inputs.slack_webhook_url || secrets.SLACK_WEBHOOK_URL }}
       SLACK_CHANNEL: ${{ github.event.inputs.slack_channel || secrets.SLACK_CHANNEL }}
